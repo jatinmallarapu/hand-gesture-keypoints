@@ -1,0 +1,48 @@
+# Exercise the NumPy and API path, then train an offline scikit-learn baseline.
+name: CI
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install '.[dev]'
+      - run: ruff check .
+      - run: python -m pytest -q
+      - run: make smoke
+      - run: docker build .
+  torch-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m pip install '.[torch]'
+      - run: python scripts/synthetic_fixture.py --repeats 2
+      - run: OMP_NUM_THREADS=1 make train-torch DATA=runs/synthetic EPOCHS=1
+      - run: python scripts/check_onnx.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-torch-reports
+          path: runs/torch-*/report.json
+  flax-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install '.[jax]'
+      - run: python scripts/synthetic_fixture.py --repeats 2
+      - run: make train-jax DATA=runs/synthetic EPOCHS=1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-flax-report
+          path: runs/jax-tcn/report.json
