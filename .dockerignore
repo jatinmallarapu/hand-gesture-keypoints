@@ -1,0 +1,10 @@
+# The build context excludes every directory containing camera recordings or weights.
+*
+!Dockerfile
+!pyproject.toml
+!src/
+!src/**
+!api/
+!api/**
+!configs/
+!configs/**
