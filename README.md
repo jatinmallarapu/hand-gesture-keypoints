@@ -4,12 +4,15 @@ Classify eight gestures from 21 MediaPipe hand landmarks per frame. Train a scik
 
 [![CI](https://github.com/jatinmallarapu/hand-gesture-keypoints/actions/workflows/ci.yml/badge.svg)](https://github.com/jatinmallarapu/hand-gesture-keypoints/actions/workflows/ci.yml) [MIT license](LICENSE)
 
-| Evaluation | Evidence |
-| --- | --- |
-| Synthetic landmarks | Reproduce all three generated subject folds with `make smoke` |
-| Consented webcam clips | Pending acquisition and unseen-participant evaluation |
+| 48 synthetic clips, three folds | Accuracy (mean ± SD) | Macro F1 (mean ± SD) |
+| --- | ---: | ---: |
+| Logistic regression | 58.3% ± 16.4 pp | 0.536 ± 0.163 |
+| Random forest | 39.6% ± 16.4 pp | 0.338 ± 0.207 |
+| PyTorch GRU, 1 epoch | 16.7% ± 5.9 pp | 0.058 ± 0.038 |
+| PyTorch TCN, 1 epoch | 12.5% ± 0.0 pp | 0.028 ± 0.000 |
+| Flax TCN, 1 epoch | 29.2% ± 5.9 pp | 0.203 ± 0.059 |
 
-The synthetic fixture checks the pipeline with generated motion and shape patterns. It does not measure accuracy on people or test MediaPipe tracking.
+These are smoke results on the same generated fixture, with two clips per class per synthetic subject. The scikit-learn baselines ran locally and the one-epoch neural runs ran in CI. The short training budget checks that both trainers, checkpointing, and ONNX export work. It is too small for model selection or a claim about unseen people. Consented webcam results are pending. [Neural training logs and reports](https://github.com/jatinmallarapu/hand-gesture-keypoints/actions/runs/44004636504)
 
 ```mermaid
 flowchart LR
@@ -34,6 +37,8 @@ make smoke
 ```
 
 On Windows without Make, run the commands shown in the Makefile. Use a separate virtual environment for each training backend if dependency resolution requires it.
+
+To reproduce the exact 48-clip baseline table, generate a fresh fixture directory with `python scripts/synthetic_fixture.py --repeats 2 --out runs/table-fixture`, then run `python -m handgest.baseline --data runs/table-fixture`.
 
 ## Record and extract
 
