@@ -1,0 +1,2 @@
+# The threshold is a starting point. Calibrate it on validation participants.
+confidence_threshold: 0.6

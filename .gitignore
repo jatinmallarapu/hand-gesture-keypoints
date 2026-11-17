@@ -1,0 +1,15 @@
+# Raw clips and derived participant landmarks stay outside the public repository.
+data/raw/
+data/processed/
+models/*.task
+*.mp4
+*.avi
+.venv/
+runs/
+__pycache__/
+.ipynb_checkpoints/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/

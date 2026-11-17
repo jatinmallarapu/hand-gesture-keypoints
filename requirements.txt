@@ -1,0 +1,2 @@
+# Use Python 3.11 or 3.12. Install training frameworks as extras when needed.
+-e .[video,dev]
